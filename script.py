@@ -48,7 +48,7 @@ for cat_link in categories_list:
     #creating a writer object with the file
         writer = csv.writer(csvfile)
         writer.writerow(headers)
-    #TODO close the file in the loop
+    csvfile.close
 
 #creating a list of links to each separate book
 links = []
@@ -66,12 +66,18 @@ for category_link in categories_list:
             links.append(link.replace("../../../", "http://books.toscrape.com/catalogue/"))
     
     #making sure that categories with two or more pages of books are parsed correctly. the biggest category has 8 pages.
-    #TODO get the count of pages from html; change the range to end at var+1 so it doesn't run unnecessarily and that it's scalable
-    pages = []
-    page_number = list(range(2,10))
-    for number in page_number:
-        pages.append(category_link.replace("index.html", f"page-{number}.html"))
+    #creating a list of link to 2+ category pages if they exist
+    pages = []    
     
+    #getting the number of pages from category html by getting the number of books per category, dividing it by 20 (numberof books per category and adding 1 in case there will be lest than 20 books on the last page)
+    number_of_books = soup.find(class_="form-horizontal").contents[3].string
+    page_number = int(number_of_books)//20 + (int(number_of_books) % 20 > 0)
+    if page_number > 1:
+        extra_pages = list(range(2,page_number+1))
+        for number in extra_pages:
+            pages.append(category_link.replace("index.html", f"page-{number}.html"))
+  
+           
     #if a category has two or more pages, they will be parsed for book links which will be added to the "links" list
     for page in pages:
         nextpage = requests.get(page)
@@ -82,7 +88,7 @@ for category_link in categories_list:
             for data in soup.find_all("h3"):
                 for a in data:
                     link = (a.get('href'))
-                    links.append(link.replace("../../../", "http://books.toscrape.com/catalogue/"))   
+                    links.append(link.replace("../../../", "http://books.toscrape.com/catalogue/"))
 
 
 #extracting and writing information from the book pages
@@ -140,12 +146,12 @@ for book_link in links:
         with open(f"c:/bookstoscrape/{category}/{filename}.jpg", 'wb') as f:
             for chunk in r.iter_content(1024):
                 f.write(chunk)
-        #TODO close the img file
-
+        f.close
+        
     #adding gathered info to the csv
     with open(f"c:/bookstoscrape/{category}/{category}.csv", "a", encoding="utf-8") as csvfile:
     #creating a writer object with the file
         writer = csv.writer(csvfile, lineterminator='\n')
         row = [book_link, upc, booktitle, pricetax, pricenotax, quantity, description, category, rating, imgurl]
         writer.writerow(row)
-    #TODO close the file
+    csvfile.close
