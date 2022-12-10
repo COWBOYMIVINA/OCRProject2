@@ -6,6 +6,10 @@ requests
 csv
 os
 
+In order to create a virtual environment, use the following commands in Windows PowerShell:
+python -m venv venv
+venv\Scripts\activate
+
 Running the script.py will create a "bookstoscrape" folder in your C:\ drive, if it doesn't exist yet.
 It will also create a subfolder for each book category and will populate it with book covers in JPG format and a CSV file containing the information for each book in a given category.
 
