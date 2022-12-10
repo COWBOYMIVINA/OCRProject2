@@ -81,14 +81,11 @@ for category_link in categories_list:
     #if a category has two or more pages, they will be parsed for book links which will be added to the "links" list
     for page in pages:
         nextpage = requests.get(page)
-        if nextpage.status_code == 404:
-            break
-        else:
-            soup = BeautifulSoup(nextpage.content, "html.parser")
-            for data in soup.find_all("h3"):
-                for a in data:
-                    link = (a.get('href'))
-                    links.append(link.replace("../../../", "http://books.toscrape.com/catalogue/"))
+        soup = BeautifulSoup(nextpage.content, "html.parser")
+        for data in soup.find_all("h3"):
+            for a in data:
+                link = (a.get('href'))
+                links.append(link.replace("../../../", "http://books.toscrape.com/catalogue/"))
 
 
 #extracting and writing information from the book pages
