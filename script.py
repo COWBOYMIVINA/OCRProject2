@@ -24,17 +24,6 @@ categories_list.remove("http://books.toscrape.com/catalogue/category/books_1/ind
 #creating headers list
 headers = ["product_page_url", "universal_ product_code (upc)", "book_title", "price_including_tax", "price_excluding_tax", "quantity_available", "product_description", "category", "review_rating", "image_url"]
 
-#getting the list of book categories from main page
-categories_list = []
-
-for data in soup.find_all(class_="side_categories"):
-    for a in data("a"):
-        link = (a.get("href"))
-        categories_list.append(link.replace("catalogue/", "http://books.toscrape.com/catalogue/"))
-
-#removing the "All books" category from the list as having it will produce dupes
-categories_list.remove("http://books.toscrape.com/catalogue/category/books_1/index.html")
-
 #creating a directory for each category and putting an output csv file inside
 for cat_link in categories_list:
     cat_url = requests.get(cat_link)
